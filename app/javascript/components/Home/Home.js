@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from "axios";
+
 
 const Home = () => {
-  const [ courseModules, setCourseModules ] = useState([
-    { id: 1, title: "First", description: "lorem1", active: false },
-    { id: 2, title: "Second", description: "lorem2", active: false },
-    { id: 3, title: "Third", description: "lorem3", active: false },
-    { id: 4, title: "Forth", description: "lorem4", active: false },
-  ]);
+  const [ courseModules, setCourseModules ] = useState([]);
+
+  useEffect(() => {
+    axios.get('./episodes.json')
+    .then(data => {
+      let res = [];
+      console.log(data.data.data)
+      data.data.data.map(d => {
+        const { id, title, description} = d
+        res.push({ id, title, description, active: false });
+      })
+      setCourseModules(res);
+    })
+    .catch(err => console.error(err));
+  }, [])
 
   return (
-    <div>This is our home component</div>
+    <div>
+      {
+        courseModules.length 
+        ? 
+        courseModules.map((course) => 
+          <div key={ course.title }>
+            <h2>{ course.id }</h2>
+            <h3>{ course.title }</h3>
+            <h4>{ course.description }</h4>
+            <h4>{ course.active }</h4>
+          </div>
+        )
+        :
+        <h2>Shit</h2>
+      }
+    </div>
   );
 }
 
